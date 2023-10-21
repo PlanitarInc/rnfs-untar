@@ -59,6 +59,9 @@ export class TarExtractor {
     // 100 bytes for linkname
     h.ustarIndicator = buffer.subarray(257, 263).toString();
     h.prefix = buffer.subarray(345, 500).toString().replace(/\0/g, '');
+    if (h.prefix) {
+      h.name = `${h.prefix}/${h.name}`;
+    }
 
     return h;
   }
