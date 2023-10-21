@@ -23,7 +23,7 @@ describe('TarExtractor', () => {
         const extractedFiles: [string, string][] = [];
 
         await tarExtractor.read(tarFilePath, async file => {
-          extractedFiles.push([file.name, (await file.read()).toString('utf-8')]);
+          extractedFiles.push([file.header.name, (await file.read()).toString('utf-8')]);
           return true; // Continue reading all files
         });
 
@@ -36,11 +36,26 @@ describe('TarExtractor', () => {
 
         let idx = 0;
         await tarExtractor.read(tarFilePath, async file => {
-          extractedFiles.push([file.name, (await file.read()).toString('utf-8')]);
+          extractedFiles.push([file.header.name, (await file.read()).toString('utf-8')]);
           return ++idx < 3; // Stop reading after 3 files
         });
 
         expect(extractedFiles).toEqual(expectedFiles.slice(0, 3));
+      });
+
+      test('read 1st file', async () => {
+        const tarExtractor = new TarExtractor();
+        const extractedFiles: [string, string][] = [];
+
+        let idx = 0;
+        await tarExtractor.read(tarFilePath, async file => {
+          if (idx === 0) {
+            extractedFiles.push([file.header.name, (await file.read()).toString('utf-8')]);
+          }
+          return ++idx < 1; // Stop reading after the 2nd file
+        });
+
+        expect(extractedFiles).toEqual(expectedFiles.slice(0, 1));
       });
 
       test('read 2nd file', async () => {
@@ -50,7 +65,7 @@ describe('TarExtractor', () => {
         let idx = 0;
         await tarExtractor.read(tarFilePath, async file => {
           if (idx === 1) {
-            extractedFiles.push([file.name, (await file.read()).toString('utf-8')]);
+            extractedFiles.push([file.header.name, (await file.read()).toString('utf-8')]);
           }
           return ++idx < 2; // Stop reading after the 2nd file
         });

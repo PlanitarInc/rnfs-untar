@@ -13,7 +13,6 @@ export class TarExtractor {
     while (offset < fileSize) {
       const headerBuffer = await this.readChunk(tarFilePath, offset, this.blockSize);
       const header = this.parseHeader(headerBuffer);
-
       if (!header) {
         break;
       }
@@ -22,7 +21,7 @@ export class TarExtractor {
 
       const fileDataSize = header.size;
 
-      const file = new TarFile(header.name, fileDataSize, async () => {
+      const file = new TarFile(header, async () => {
         const fileDataBuffer = await this.readChunk(tarFilePath, offset, fileDataSize);
         return fileDataBuffer;
       });
@@ -42,22 +41,42 @@ export class TarExtractor {
     return Buffer.from(buffer, 'base64');
   }
 
-  parseHeader(buffer: Buffer): { name: string; size: number } | null {
-    const name = buffer.slice(0, 100).toString().replace(/\0/g, '');
-    const size = parseInt(buffer.slice(124, 136).toString(), 8);
+  parseHeader(buffer: Buffer): TarFileHeader | null {
+    const h = new TarFileHeader();
 
-    if (!name) {
+    h.name = buffer.subarray(0, 100).toString().replace(/\0/g, '');
+    if (!h.name) {
       return null;
     }
 
-    return { name, size };
+    // 8 bytes for mode
+    // 8 bytes for uid
+    // 8 bytes for gid
+    h.size = parseInt(buffer.subarray(124, 136).toString(), 8);
+    // 12 bytes for mtime
+    // 8 bytes for checksum
+    h.typeFlag = buffer.subarray(156, 157).toString();
+    // 100 bytes for linkname
+    h.ustarIndicator = buffer.subarray(257, 263).toString();
+    h.prefix = buffer.subarray(345, 500).toString().replace(/\0/g, '');
+
+    return h;
   }
+}
+
+class TarFileHeader {
+  constructor(
+    public name?: string,
+    public size?: number,
+    public typeFlag?: string,
+    public ustarIndicator?: string,
+    public prefix?: string,
+  ) {}
 }
 
 class TarFile {
   constructor(
-    public name: string,
-    public size: number,
+    public header: TarFileHeader,
     private readContentsFn: () => Promise<Buffer>,
   ) {}
 
