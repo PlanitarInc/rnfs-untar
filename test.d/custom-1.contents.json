@@ -1,0 +1,30 @@
+[
+  [
+    "root-dir/system.cfg",
+    "System CFG contents"
+  ],
+  [
+    "root-dir/floor1.dxf",
+    "DXF contents for floor 1"
+  ],
+  [
+    "root-dir/stitch_exp.json",
+    "{\"metadata\":\"stitch\"}"
+  ],
+  [
+    "root-dir/pano-21/s.jpg",
+    "Sphere for pano 21"
+  ],
+  [
+    "root-dir/pano-21/pc.dat",
+    "point cloud for pano 21"
+  ],
+  [
+    "root-dir/pano-22/s.jpg",
+    "Sphere for pano 22"
+  ],
+  [
+    "root-dir/pano-22/pm.pix",
+    "pm.pix for pano 22"
+  ]
+]
