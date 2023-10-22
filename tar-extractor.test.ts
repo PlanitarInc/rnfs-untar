@@ -18,6 +18,20 @@ describe('TarExtractor', () => {
       const tarFilePath = path.join(testDirectory, file);
       const expectedFiles = loadJSON(path.join(testDirectory, `${basename}.contents.json`));
 
+      test('list all files', async () => {
+        const tarExtractor = new TarExtractor();
+        const extractedFiles: [string, number][] = [];
+
+        await tarExtractor.read(tarFilePath, async file => {
+          extractedFiles.push([file.header.name, file.header.size]);
+          return true; // Continue reading all files
+        });
+
+        expect(extractedFiles).toEqual(
+          expectedFiles.map(([name, size]) => [name, size] as [string, number]),
+        );
+      });
+
       test('read all files', async () => {
         const tarExtractor = new TarExtractor();
         const extractedFiles: [string, number, string][] = [];
