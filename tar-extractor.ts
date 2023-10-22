@@ -116,7 +116,7 @@ export class TarExtractor {
   }
 }
 
-class TarFileHeader {
+export class TarFileHeader {
   constructor(
     public name?: string,
     public size?: number,
@@ -130,7 +130,7 @@ class TarFileHeader {
   }
 }
 
-class TarFile {
+export class TarFile {
   constructor(
     public header: TarFileHeader,
     private readContentsFn: () => Promise<Buffer>,
