@@ -48,6 +48,7 @@ import { readTar } from '@planitar/rnfs-untar';
 
 readTar('/path/to/tar/archive.tar', async (file) => {
   console.log('File:', file.header.name);
+  console.log('Content:', (await file.read()).toString('utf-8'));
 });
 ```
 
@@ -62,6 +63,7 @@ const tarExtractor = new TarExtractor();
 
 tarExtractor.read('/path/to/tar/archive.tar', async (file) => {
   console.log('File:', file.header.name);
+  console.log('Content:', (await file.read()).toString('utf-8'));
 });
 ```
 
