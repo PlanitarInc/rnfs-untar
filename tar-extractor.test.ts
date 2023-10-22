@@ -40,7 +40,7 @@ describe('TarExtractor', () => {
           extractedFiles.push([
             file.header.name,
             file.header.size,
-            (await file.read()).toString('utf-8'),
+            toPrintableString(await file.read()),
           ]);
           return true; // Continue reading all files
         });
@@ -57,7 +57,7 @@ describe('TarExtractor', () => {
           extractedFiles.push([
             file.header.name,
             file.header.size,
-            (await file.read()).toString('utf-8'),
+            toPrintableString(await file.read()),
           ]);
           return ++idx < 3; // Stop reading after 3 files
         });
@@ -75,7 +75,7 @@ describe('TarExtractor', () => {
             extractedFiles.push([
               file.header.name,
               file.header.size,
-              (await file.read()).toString('utf-8'),
+              toPrintableString(await file.read()),
             ]);
           }
           return ++idx < 1; // Stop reading after the 2nd file
@@ -94,7 +94,7 @@ describe('TarExtractor', () => {
             extractedFiles.push([
               file.header.name,
               file.header.size,
-              (await file.read()).toString('utf-8'),
+              toPrintableString(await file.read()),
             ]);
           }
           return ++idx < 2; // Stop reading after the 2nd file
@@ -110,4 +110,20 @@ function loadJSON(file: string): any {
   const buf = fs.readFileSync(file);
   const exp = JSON.parse(buf.toString('utf-8'));
   return exp;
+}
+
+function toPrintableString(buffer) {
+  const printableChars = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+
+  let result = '';
+  for (let i = 0; i < buffer.length; i++) {
+    const char = buffer.toString('utf8', i, i + 1);
+    if (printableChars.includes(char)) {
+      result += char;
+    } else {
+      result += '\\x' + buffer[i].toString(16).padStart(2, '0');
+    }
+  }
+
+  return result;
 }
