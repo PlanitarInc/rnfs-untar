@@ -20,14 +20,12 @@ export class TarExtractor {
       offset += this.blockSize;
 
       const fileDataSize = header.size;
-
       const file = new TarFile(header, async () => {
         const fileDataBuffer = await this.readChunk(tarFilePath, offset, fileDataSize);
         return fileDataBuffer;
       });
 
       const shouldContinue = await callback(file);
-
       if (shouldContinue === false) {
         break;
       }
