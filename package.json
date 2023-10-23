@@ -1,6 +1,6 @@
 {
   "name": "@planitar/rnfs-untar",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Extract files from TAR archives in React Native environments",
   "main": "index.js",
   "scripts": {
