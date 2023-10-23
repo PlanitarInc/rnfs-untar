@@ -22,14 +22,25 @@ listFiles('/path/to/tar/archive.tar').then(files => {
 });
 ```
 
-### `findFile(tarFilePath: string, fileName: string): Promise<TarFile | null>`
+### `findFile(tarFilePath: string, fileName: string | RegExp): Promise<TarFile | null>`
 
 Finds a specific file in the TAR archive.
 
 ```javascript
 import { findFile } from '@planitar/rnfs-untar';
 
+// Match by exact full path.
 findFile('/path/to/tar/archive.tar', 'specific/file.txt').then(file => {
+  if (file) {
+    console.log('File found:', file.header.name);
+    console.log('File content:', (await file.read()).toString('utf-8'));
+  } else {
+    console.log('File not found.');
+  }
+});
+
+// Match by regexp.
+findFile('/path/to/tar/archive.tar', /\bfile\.txt$/).then(file => {
   if (file) {
     console.log('File found:', file.header.name);
     console.log('File content:', (await file.read()).toString('utf-8'));
