@@ -1,13 +1,13 @@
 {
   "name": "@planitar/rnfs-untar",
   "version": "1.1.0",
-  "description": "",
+  "description": "Extract files from TAR archives in React Native environments",
   "main": "index.js",
   "scripts": {
     "test": "jest --no-cache"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Planitar Inc.",
+  "license": "MIT",
   "dependencies": {
     "react-native-fs": "^2.20.0"
   },
