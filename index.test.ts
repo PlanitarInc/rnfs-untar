@@ -46,8 +46,26 @@ describe('findFile', () => {
     );
   });
 
+  test('regexp match', async () => {
+    expect(
+      await findFile(tarFilePath, /\.json$/).then(async f => [
+        f.header.name,
+        f.header.size,
+        (await f.read()).toString('utf8'),
+      ]),
+    ).toEqual([
+      'object.json',
+      16,
+      '{"prop":"value"}',
+    ]);
+  });
+
   test('exact mismatch', async () => {
     await expect(findFile(tarFilePath, '9.txt')).rejects.toThrowError('File not found: 9.txt');
+  });
+
+  test('regexp mismatch', async () => {
+    await expect(findFile(tarFilePath, /qwe\.zip$/)).rejects.toThrowError('File not found: /qwe\\.zip$/');
   });
 });
 
