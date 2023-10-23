@@ -8,6 +8,11 @@
   },
   "author": "Planitar Inc.",
   "license": "MIT",
+  "files": [
+    "*.ts",
+    "!*.test.ts",
+    "*.d.ts"
+  ],
   "dependencies": {
     "react-native-fs": "^2.20.0"
   },
