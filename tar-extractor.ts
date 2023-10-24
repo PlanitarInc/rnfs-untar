@@ -3,6 +3,7 @@ import { Buffer } from 'buffer';
 
 export class TarExtractor {
   blockSize = 512;
+  debug = false;
 
   async read(
     tarFilePath: string,
@@ -12,16 +13,20 @@ export class TarExtractor {
     let offset = 0;
     let paxHeaderData = {};
 
+    this.__log(`Reading ${tarFilePath} (${fileSize} bytes)`);
     while (offset < fileSize) {
+      this.__log(`Reading header at offset ${offset}`);
       const headerBuffer = await this.readChunk(tarFilePath, offset, this.blockSize);
       const header = this.parseHeader(headerBuffer, paxHeaderData);
       if (!header) {
+        this.__log(`Invalid header at offset ${offset}`);
         break;
       }
 
       offset += this.blockSize;
 
       if (header.isPax()) {
+        this.__log(`Found PAX header at offset ${offset}, size ${header.size}`);
         // PAX headers can span multiple blocks
         const paxBuffer = await this.readChunk(tarFilePath, offset, header.size);
         paxHeaderData = this.parsePaxHeader(paxBuffer);
@@ -30,6 +35,7 @@ export class TarExtractor {
         continue;  // Skip to the next iteration to handle the next header
       }
 
+      this.__log(`Iterating over file ${header.name} at offset ${offset}, size ${header.size}`);
       const fileDataSize = header.size;
       const file = new TarFile(header, () => this.readChunk(tarFilePath, offset, fileDataSize));
       const shouldContinue = await callback(file);
@@ -114,6 +120,13 @@ export class TarExtractor {
     }
     
     return paxHeaderData;
+  }
+
+  __log(...args: any[]): void {
+    if (this.debug) {
+      args[0] = `rnfs-tar: ${args[0]}`;
+      console.log.apply(console, args);
+    }
   }
 }
 
