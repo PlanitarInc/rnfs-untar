@@ -1,5 +1,12 @@
 import RNFS from 'react-native-fs';
-import { Buffer } from 'buffer';
+// The official docs suggest to import it with a trailing slash:
+// > To depend on this module explicitly (without browserify), require it like
+// > this:
+// >     var Buffer = require('buffer/').Buffer  // note: the trailing slash is important!
+// > To require this module explicitly, use require('buffer/') which tells the
+// > node.js module lookup algorithm (also used by browserify) to use the npm
+// > module named buffer instead of the node.js core module named buffer!
+import { Buffer } from 'buffer/';
 
 type LogLevel = '' | 'debug' | 'trace';
 
