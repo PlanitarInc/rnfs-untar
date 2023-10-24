@@ -1,4 +1,4 @@
-# `rnfs-untar` ![npm](https://img.shields.io/npm/v/%40planitar%2Frnfs-untar) [![CI](https://github.com/PlanitarInc/rnfs-untar/actions/workflows/node.js.yml/badge.svg)](https://github.com/PlanitarInc/rnfs-untar/actions/workflows/node.js.yml) [![Coverage Status](https://coveralls.io/repos/github/PlanitarInc/rnfs-untar/badge.svg)](https://coveralls.io/github/PlanitarInc/rnfs-untar)
+# `rnfs-untar` [![npm](https://img.shields.io/npm/v/%40planitar%2Frnfs-untar)](https://www.npmjs.com/package/@planitar/rnfs-untar) [![CI](https://github.com/PlanitarInc/rnfs-untar/actions/workflows/node.js.yml/badge.svg)](https://github.com/PlanitarInc/rnfs-untar/actions/workflows/node.js.yml) [![Coverage Status](https://coveralls.io/repos/github/PlanitarInc/rnfs-untar/badge.svg)](https://coveralls.io/github/PlanitarInc/rnfs-untar)
 
 `rnfs-untar` is a utility for extracting files from TAR archives in React Native environments. This library provides both a low-level API for granular control and high-level API functions for common tasks such as listing all files, finding a specific file, and reading the entire TAR archive.
 
