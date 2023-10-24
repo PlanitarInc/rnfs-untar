@@ -1,4 +1,5 @@
 import RNFS from 'react-native-fs';
+import { Buffer } from 'buffer';
 
 export class TarExtractor {
   blockSize = 512;
