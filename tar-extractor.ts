@@ -56,7 +56,7 @@ export class TarExtractor {
   parseHeader(buffer: Buffer, paxHeaderData: Record<string, any>): TarFileHeader | null {
     const h = new TarFileHeader();
 
-    h.name = buffer.subarray(0, 100).toString().replace(/\0/g, '');
+    h.name = buffer.subarray(0, 100).toString('utf8').replace(/\0/g, '');
     if (!h.name) {
         return null;
     }
@@ -64,13 +64,13 @@ export class TarExtractor {
     // 8 bytes for mode
     // 8 bytes for uid
     // 8 bytes for gid
-    h.size = parseInt(buffer.subarray(124, 136).toString(), 8);
+    h.size = parseInt(buffer.subarray(124, 136).toString('utf8'), 8);
     // 12 bytes for mtime
     // 8 bytes for checksum
-    h.typeFlag = buffer.subarray(156, 157).toString();
+    h.typeFlag = buffer.subarray(156, 157).toString('utf8');
     // 100 bytes for linkname
-    h.ustarIndicator = buffer.subarray(257, 263).toString();
-    h.prefix = buffer.subarray(345, 500).toString().replace(/\0/g, '');
+    h.ustarIndicator = buffer.subarray(257, 263).toString('utf8');
+    h.prefix = buffer.subarray(345, 500).toString('utf8').replace(/\0/g, '');
     if (h.prefix) {
         h.name = `${h.prefix}/${h.name}`;
     }
