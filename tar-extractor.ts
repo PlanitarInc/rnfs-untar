@@ -1,9 +1,11 @@
 import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
 
+type LogLevel = '' | 'debug' | 'trace';
+
 export class TarExtractor {
   blockSize = 512;
-  debug = false;
+  logLevel: LogLevel = '';
 
   async read(
     tarFilePath: string,
@@ -13,20 +15,20 @@ export class TarExtractor {
     let offset = 0;
     let paxHeaderData = {};
 
-    this.__log(`Reading ${tarFilePath} (${fileSize} bytes)`);
+    this.__log('debug', `Reading ${tarFilePath} (${fileSize} bytes)`);
     while (offset < fileSize) {
-      this.__log(`Reading header at offset ${offset}`);
+      this.__log('debug', `Reading header at offset ${offset}`);
       const headerBuffer = await this.readChunk(tarFilePath, offset, this.blockSize);
       const header = this.parseHeader(headerBuffer, paxHeaderData);
       if (!header) {
-        this.__log(`Invalid header at offset ${offset}`);
+        this.__log('debug', `Invalid header at offset ${offset}`);
         break;
       }
 
       offset += this.blockSize;
 
       if (header.isPax()) {
-        this.__log(`Found PAX header at offset ${offset}, size ${header.size}`);
+        this.__log('debug', `Found PAX header at offset ${offset}, size ${header.size}`);
         // PAX headers can span multiple blocks
         const paxBuffer = await this.readChunk(tarFilePath, offset, header.size);
         paxHeaderData = this.parsePaxHeader(paxBuffer);
@@ -35,7 +37,7 @@ export class TarExtractor {
         continue;  // Skip to the next iteration to handle the next header
       }
 
-      this.__log(`Iterating over file ${header.name} at offset ${offset}, size ${header.size}`);
+      this.__log('debug', `Iterating over file ${header.name} at offset ${offset}, size ${header.size}`);
       const fileDataSize = header.size;
       const file = new TarFile(header, () => this.readChunk(tarFilePath, offset, fileDataSize));
       const shouldContinue = await callback(file);
@@ -56,7 +58,8 @@ export class TarExtractor {
   parseHeader(buffer: Buffer, paxHeaderData: Record<string, any>): TarFileHeader | null {
     const h = new TarFileHeader();
 
-    h.name = buffer.subarray(0, 100).toString().replace(/\0/g, '');
+    h.name = this.__parseStr(buffer, 0, 100, true);
+    this.__log('trace', `- file name '${h.name}' from `, buffer.subarray(0, 100));
     if (!h.name) {
         return null;
     }
@@ -64,13 +67,17 @@ export class TarExtractor {
     // 8 bytes for mode
     // 8 bytes for uid
     // 8 bytes for gid
-    h.size = parseInt(buffer.subarray(124, 136).toString(), 8);
+    h.size = parseInt(this.__parseStr(buffer, 124, 136), 8);
+    this.__log('trace', `- file size '${h.size}' from `, buffer.subarray(124, 136));
     // 12 bytes for mtime
     // 8 bytes for checksum
-    h.typeFlag = buffer.subarray(156, 157).toString();
+    h.typeFlag = this.__parseStr(buffer, 156, 157, true);
+    this.__log('trace', `- file type '${h.typeFlag}' from `, buffer.subarray(156, 157));
     // 100 bytes for linkname
-    h.ustarIndicator = buffer.subarray(257, 263).toString();
-    h.prefix = buffer.subarray(345, 500).toString().replace(/\0/g, '');
+    h.ustarIndicator = this.__parseStr(buffer, 257, 263);
+    this.__log('trace', `- ustar ind. '${h.ustarIndicator}' from `, buffer.subarray(257, 263));
+    h.prefix = this.__parseStr(buffer, 345, 500, true);
+    this.__log('trace', `- prefix '${h.prefix}' from `, buffer.subarray(345, 500));
     if (h.prefix) {
         h.name = `${h.prefix}/${h.name}`;
     }
@@ -83,6 +90,7 @@ export class TarExtractor {
       h.size = parseInt(paxHeaderData['size'], 10);
     }
 
+    this.__log('trace', `header parsed:`, h);
     return h;
   }
 
@@ -122,8 +130,17 @@ export class TarExtractor {
     return paxHeaderData;
   }
 
-  __log(...args: any[]): void {
-    if (this.debug) {
+  setLogLevel(level: LogLevel): void {
+    this.logLevel = level;
+  }
+
+  __parseStr(buffer: Buffer, start: number, end: number, trim?: boolean): string {
+    const s = buffer.toString('utf8', start, end);
+    return !trim ? s : s.replace(/\0+$/, '');
+  }
+
+  __log(level: LogLevel, ...args: any[]): void {
+    if (this.logLevel === level || this.logLevel === 'trace') {
       args[0] = `rnfs-tar: ${args[0]}`;
       console.log.apply(console, args);
     }
