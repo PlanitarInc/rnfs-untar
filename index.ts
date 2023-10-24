@@ -29,7 +29,6 @@ export function findFile(tarFilePath: string, fileName: string | RegExp): Promis
   }).then(() => foundFile || Promise.reject(new Error(`File not found: ${fileName}`)));
 };
 
-
 export function readTar(
   tarFilePath: string,
   callback: (file: TarFile) => Promise<boolean | void>,
