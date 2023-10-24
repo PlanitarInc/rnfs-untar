@@ -56,7 +56,7 @@ export class TarExtractor {
   parseHeader(buffer: Buffer, paxHeaderData: Record<string, any>): TarFileHeader | null {
     const h = new TarFileHeader();
 
-    h.name = buffer.subarray(0, 100).toString('utf8').replace(/\0/g, '');
+    h.name = buffer.subarray(0, 100).toString('utf8').replace(/\0+$/, '');
     if (!h.name) {
         return null;
     }
@@ -70,7 +70,7 @@ export class TarExtractor {
     h.typeFlag = buffer.subarray(156, 157).toString('utf8');
     // 100 bytes for linkname
     h.ustarIndicator = buffer.subarray(257, 263).toString('utf8');
-    h.prefix = buffer.subarray(345, 500).toString('utf8').replace(/\0/g, '');
+    h.prefix = buffer.subarray(345, 500).toString('utf8').replace(/\0+$/, '');
     if (h.prefix) {
         h.name = `${h.prefix}/${h.name}`;
     }
