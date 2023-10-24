@@ -57,6 +57,8 @@ export class TarExtractor {
     const h = new TarFileHeader();
 
     h.name = buffer.subarray(0, 100).toString('utf8').replace(/\0+$/, '');
+    // XXX: Remove this debug print later
+    this.__log(`parsed file name '${h.name}' from header block of size ${buffer.length}`);
     if (!h.name) {
         return null;
     }
