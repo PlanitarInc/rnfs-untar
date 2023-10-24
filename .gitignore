@@ -1,3 +1,4 @@
 node_modules/
 coverage/
 planitar-rnfs-untar-*.tgz
+.*.sw[a-z]*
