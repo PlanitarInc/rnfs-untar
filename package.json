@@ -15,7 +15,7 @@
   ],
   "dependencies": {
     "buffer": "^6.0.3",
-    "react-native-fs": "github:PlanitarInc/react-native-fs#planitar/osergiienko/R1-1386-seekToFileOffset-crash-fix"
+    "react-native-fs": "github:PlanitarInc/react-native-fs#master"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
