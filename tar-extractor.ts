@@ -1,4 +1,4 @@
-import RNFS from 'react-native-fs';
+import * as RNFS from '@dr.pogodin/react-native-fs';
 // The official docs suggest to import it with a trailing slash:
 // > To depend on this module explicitly (without browserify), require it like
 // > this:
