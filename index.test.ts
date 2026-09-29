@@ -4,7 +4,7 @@ import * as path from 'path';
 import { findFile, listFiles, readTar } from './index';
 import { listTestTarCases, toPrintableString } from './utils.test';
 
-jest.mock('react-native-fs');
+jest.mock('@dr.pogodin/react-native-fs');
 
 describe('listFiles', () => {
   listTestTarCases().forEach(tc => {

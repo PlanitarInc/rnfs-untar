@@ -2,7 +2,7 @@ import { jest, describe, expect, test } from '@jest/globals';
 import { TarExtractor } from './tar-extractor';
 import { listTestTarCases, toPrintableString } from './utils.test';
 
-jest.mock('react-native-fs');
+jest.mock('@dr.pogodin/react-native-fs');
 
 describe('TarExtractor', () => {
   const testDirectory = './test.d/';
